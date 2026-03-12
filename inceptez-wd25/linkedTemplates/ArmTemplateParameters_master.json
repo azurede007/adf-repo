@@ -1,0 +1,90 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "inceptez-wd25"
+		},
+		"AzureDatabricks1_accessToken": {
+			"value": ""
+		},
+		"ls_adls_retail_accountKey": {
+			"value": ""
+		},
+		"ls_blob_retail_connectionString": {
+			"value": ""
+		},
+		"ls_databricks_accessToken": {
+			"value": ""
+		},
+		"ls_deltalake_accessToken": {
+			"value": ""
+		},
+		"ls_sqlserver_password": {
+			"value": ""
+		},
+		"AzureDatabricks1_properties_typeProperties_existingClusterId": {
+			"value": "0305-232436-qtee4o0r"
+		},
+		"ls_adls_retail_properties_typeProperties_url": {
+			"value": "https://saadlsadf.dfs.core.windows.net/"
+		},
+		"ls_databricks_properties_typeProperties_existingClusterId": {
+			"value": "0305-232436-qtee4o0r"
+		},
+		"ls_http_api_properties_typeProperties_url": {
+			"value": "https://api.open-meteo.com/v1/"
+		},
+		"ls_kv_properties_typeProperties_baseUrl": {
+			"value": "https://inceptez-sql-kv.vault.azure.net/"
+		},
+		"ls_sql_kv_properties_typeProperties_server": {
+			"value": "inceptezwd25.database.windows.net"
+		},
+		"ls_sql_kv_properties_typeProperties_database": {
+			"value": "dbwdbatch25"
+		},
+		"ls_sql_kv_properties_typeProperties_userName": {
+			"value": "inceptezuser"
+		},
+		"ls_sql_param_properties_typeProperties_server": {
+			"value": "inceptezwd25.database.windows.net"
+		},
+		"ls_sql_param_properties_typeProperties_database": {
+			"value": "@{linkedService().dbname}"
+		},
+		"ls_sql_param_properties_typeProperties_userName": {
+			"value": "@{linkedService().username}"
+		},
+		"ls_sqlserver_properties_typeProperties_server": {
+			"value": "inceptezwd25.database.windows.net"
+		},
+		"ls_sqlserver_properties_typeProperties_database": {
+			"value": "dbwdbatch25"
+		},
+		"ls_sqlserver_properties_typeProperties_userName": {
+			"value": "inceptezuser"
+		},
+		"event_trg_properties_typeProperties_scope": {
+			"value": "/subscriptions/b5e4da8f-c8ad-48d8-8ecc-f5bc2da0685f/resourceGroups/rg-adf/providers/Microsoft.Storage/storageAccounts/saadlsadf"
+		},
+		"schedule_trg_properties_pl_12_sql_adls_fixed_window_parameters_pstartdate": {
+			"value": "2026-02-03"
+		},
+		"schedule_trg_properties_pl_12_sql_adls_fixed_window_parameters_penddate": {
+			"value": "2026-02-03"
+		},
+		"tumbling_one_specifc_day_properties_pipeline_parameters_pstartdate": {
+			"value": "@trigger().outputs.windowStartTime"
+		},
+		"tumbling_one_specifc_day_properties_pipeline_parameters_penddate": {
+			"value": "@trigger().outputs.windowEndTime"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}

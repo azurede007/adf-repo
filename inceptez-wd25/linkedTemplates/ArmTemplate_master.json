@@ -1,0 +1,317 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "inceptez-wd25"
+		},
+		"AzureDatabricks1_accessToken": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accessToken' of 'AzureDatabricks1'"
+		},
+		"ls_adls_retail_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ls_adls_retail'"
+		},
+		"ls_blob_retail_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'ls_blob_retail'"
+		},
+		"ls_databricks_accessToken": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accessToken' of 'ls_databricks'"
+		},
+		"ls_deltalake_accessToken": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accessToken' of 'ls_deltalake'"
+		},
+		"ls_sqlserver_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'ls_sqlserver'"
+		},
+		"AzureDatabricks1_properties_typeProperties_existingClusterId": {
+			"type": "string",
+			"defaultValue": "0305-232436-qtee4o0r"
+		},
+		"ls_adls_retail_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://saadlsadf.dfs.core.windows.net/"
+		},
+		"ls_databricks_properties_typeProperties_existingClusterId": {
+			"type": "string",
+			"defaultValue": "0305-232436-qtee4o0r"
+		},
+		"ls_http_api_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://api.open-meteo.com/v1/"
+		},
+		"ls_kv_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://inceptez-sql-kv.vault.azure.net/"
+		},
+		"ls_sql_kv_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "inceptezwd25.database.windows.net"
+		},
+		"ls_sql_kv_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "dbwdbatch25"
+		},
+		"ls_sql_kv_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "inceptezuser"
+		},
+		"ls_sql_param_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "inceptezwd25.database.windows.net"
+		},
+		"ls_sql_param_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "@{linkedService().dbname}"
+		},
+		"ls_sql_param_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "@{linkedService().username}"
+		},
+		"ls_sqlserver_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "inceptezwd25.database.windows.net"
+		},
+		"ls_sqlserver_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "dbwdbatch25"
+		},
+		"ls_sqlserver_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "inceptezuser"
+		},
+		"event_trg_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/b5e4da8f-c8ad-48d8-8ecc-f5bc2da0685f/resourceGroups/rg-adf/providers/Microsoft.Storage/storageAccounts/saadlsadf"
+		},
+		"schedule_trg_properties_pl_12_sql_adls_fixed_window_parameters_pstartdate": {
+			"type": "string",
+			"defaultValue": "2026-02-03"
+		},
+		"schedule_trg_properties_pl_12_sql_adls_fixed_window_parameters_penddate": {
+			"type": "string",
+			"defaultValue": "2026-02-03"
+		},
+		"tumbling_one_specifc_day_properties_pipeline_parameters_pstartdate": {
+			"type": "string",
+			"defaultValue": "@trigger().outputs.windowStartTime"
+		},
+		"tumbling_one_specifc_day_properties_pipeline_parameters_penddate": {
+			"type": "string",
+			"defaultValue": "@trigger().outputs.windowEndTime"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "inceptez-wd25_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"AzureDatabricks1_accessToken": {
+						"value": "[parameters('AzureDatabricks1_accessToken')]"
+					},
+					"ls_adls_retail_accountKey": {
+						"value": "[parameters('ls_adls_retail_accountKey')]"
+					},
+					"ls_blob_retail_connectionString": {
+						"value": "[parameters('ls_blob_retail_connectionString')]"
+					},
+					"ls_databricks_accessToken": {
+						"value": "[parameters('ls_databricks_accessToken')]"
+					},
+					"ls_deltalake_accessToken": {
+						"value": "[parameters('ls_deltalake_accessToken')]"
+					},
+					"ls_sqlserver_password": {
+						"value": "[parameters('ls_sqlserver_password')]"
+					},
+					"AzureDatabricks1_properties_typeProperties_existingClusterId": {
+						"value": "[parameters('AzureDatabricks1_properties_typeProperties_existingClusterId')]"
+					},
+					"ls_adls_retail_properties_typeProperties_url": {
+						"value": "[parameters('ls_adls_retail_properties_typeProperties_url')]"
+					},
+					"ls_databricks_properties_typeProperties_existingClusterId": {
+						"value": "[parameters('ls_databricks_properties_typeProperties_existingClusterId')]"
+					},
+					"ls_http_api_properties_typeProperties_url": {
+						"value": "[parameters('ls_http_api_properties_typeProperties_url')]"
+					},
+					"ls_kv_properties_typeProperties_baseUrl": {
+						"value": "[parameters('ls_kv_properties_typeProperties_baseUrl')]"
+					},
+					"ls_sql_param_properties_typeProperties_server": {
+						"value": "[parameters('ls_sql_param_properties_typeProperties_server')]"
+					},
+					"ls_sql_param_properties_typeProperties_database": {
+						"value": "[parameters('ls_sql_param_properties_typeProperties_database')]"
+					},
+					"ls_sql_param_properties_typeProperties_userName": {
+						"value": "[parameters('ls_sql_param_properties_typeProperties_userName')]"
+					},
+					"ls_sqlserver_properties_typeProperties_server": {
+						"value": "[parameters('ls_sqlserver_properties_typeProperties_server')]"
+					},
+					"ls_sqlserver_properties_typeProperties_database": {
+						"value": "[parameters('ls_sqlserver_properties_typeProperties_database')]"
+					},
+					"ls_sqlserver_properties_typeProperties_userName": {
+						"value": "[parameters('ls_sqlserver_properties_typeProperties_userName')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "inceptez-wd25_ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'inceptez-wd25_ArmTemplate_0')]"
+			]
+		},
+		{
+			"name": "inceptez-wd25_ArmTemplate_2",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_2.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'inceptez-wd25_ArmTemplate_1')]"
+			]
+		},
+		{
+			"name": "inceptez-wd25_ArmTemplate_3",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_3.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"ls_sql_kv_properties_typeProperties_server": {
+						"value": "[parameters('ls_sql_kv_properties_typeProperties_server')]"
+					},
+					"ls_sql_kv_properties_typeProperties_database": {
+						"value": "[parameters('ls_sql_kv_properties_typeProperties_database')]"
+					},
+					"ls_sql_kv_properties_typeProperties_userName": {
+						"value": "[parameters('ls_sql_kv_properties_typeProperties_userName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'inceptez-wd25_ArmTemplate_2')]"
+			]
+		},
+		{
+			"name": "inceptez-wd25_ArmTemplate_4",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_4.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'inceptez-wd25_ArmTemplate_3')]"
+			]
+		},
+		{
+			"name": "inceptez-wd25_ArmTemplate_5",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_5.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"event_trg_properties_typeProperties_scope": {
+						"value": "[parameters('event_trg_properties_typeProperties_scope')]"
+					},
+					"schedule_trg_properties_pl_12_sql_adls_fixed_window_parameters_pstartdate": {
+						"value": "[parameters('schedule_trg_properties_pl_12_sql_adls_fixed_window_parameters_pstartdate')]"
+					},
+					"schedule_trg_properties_pl_12_sql_adls_fixed_window_parameters_penddate": {
+						"value": "[parameters('schedule_trg_properties_pl_12_sql_adls_fixed_window_parameters_penddate')]"
+					},
+					"tumbling_one_specifc_day_properties_pipeline_parameters_pstartdate": {
+						"value": "[parameters('tumbling_one_specifc_day_properties_pipeline_parameters_pstartdate')]"
+					},
+					"tumbling_one_specifc_day_properties_pipeline_parameters_penddate": {
+						"value": "[parameters('tumbling_one_specifc_day_properties_pipeline_parameters_penddate')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'inceptez-wd25_ArmTemplate_4')]"
+			]
+		}
+	]
+}
