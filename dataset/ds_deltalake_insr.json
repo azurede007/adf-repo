@@ -7,6 +7,10 @@
 		},
 		"annotations": [],
 		"type": "AzureDatabricksDeltaLakeDataset",
+		"typeProperties": {
+			"database": "inceptez_insurance.ins_gold",
+			"table": "inceptez_insurance.ins_gold.claims_summary"
+		},
 		"schema": []
 	}
 }
