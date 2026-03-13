@@ -26,6 +26,10 @@
 		"tumbling_one_specifc_day_properties_pipeline_parameters_penddate": {
 			"type": "string",
 			"defaultValue": "@trigger().outputs.windowEndTime"
+		},
+		"trg_tumb_ins_data_process_properties_pipeline_parameters_process_dt": {
+			"type": "string",
+			"defaultValue": "@formatDateTime(trigger().outputs.windowStartTime, 'yyyy-MM-dd')"
 		}
 	},
 	"variables": {
@@ -687,6 +691,38 @@
 					"endTime": "2026-02-28T02:43:00Z",
 					"delay": "00:00:00",
 					"maxConcurrency": 50,
+					"retryPolicy": {
+						"intervalInSeconds": 30
+					},
+					"dependsOn": []
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/trg_tumb_ins_data_process')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipeline": {
+					"pipelineReference": {
+						"referenceName": "pl_32_reprocess",
+						"type": "PipelineReference"
+					},
+					"parameters": {
+						"process_dt": "[parameters('trg_tumb_ins_data_process_properties_pipeline_parameters_process_dt')]"
+					}
+				},
+				"type": "TumblingWindowTrigger",
+				"typeProperties": {
+					"frequency": "Hour",
+					"interval": 24,
+					"startTime": "2026-03-08T02:07:00Z",
+					"endTime": "2026-03-15T02:07:00Z",
+					"delay": "00:00:00",
+					"maxConcurrency": 1,
 					"retryPolicy": {
 						"intervalInSeconds": 30
 					},

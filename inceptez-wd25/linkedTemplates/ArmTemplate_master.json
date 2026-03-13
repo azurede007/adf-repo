@@ -115,6 +115,10 @@
 			"type": "string",
 			"defaultValue": "@trigger().outputs.windowEndTime"
 		},
+		"trg_tumb_ins_data_process_properties_pipeline_parameters_process_dt": {
+			"type": "string",
+			"defaultValue": "@formatDateTime(trigger().outputs.windowStartTime, 'yyyy-MM-dd')"
+		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -320,6 +324,9 @@
 					},
 					"tumbling_one_specifc_day_properties_pipeline_parameters_penddate": {
 						"value": "[parameters('tumbling_one_specifc_day_properties_pipeline_parameters_penddate')]"
+					},
+					"trg_tumb_ins_data_process_properties_pipeline_parameters_process_dt": {
+						"value": "[parameters('trg_tumb_ins_data_process_properties_pipeline_parameters_process_dt')]"
 					}
 				}
 			},

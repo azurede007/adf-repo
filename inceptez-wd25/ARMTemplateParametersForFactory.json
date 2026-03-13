@@ -85,6 +85,9 @@
 		},
 		"tumbling_one_specifc_day_properties_pipeline_parameters_penddate": {
 			"value": "@trigger().outputs.windowEndTime"
+		},
+		"trg_tumb_ins_data_process_properties_pipeline_parameters_process_dt": {
+			"value": "@formatDateTime(trigger().outputs.windowStartTime, 'yyyy-MM-dd')"
 		}
 	}
 }
