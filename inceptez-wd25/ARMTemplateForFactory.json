@@ -39,9 +39,17 @@
 			"type": "string",
 			"defaultValue": "https://saadlsadf.dfs.core.windows.net/"
 		},
+		"ls_adls_staging_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://dbstorageelykbtwwumdrq.dfs.core.windows.net/"
+		},
 		"ls_databricks_properties_typeProperties_existingClusterId": {
 			"type": "string",
 			"defaultValue": "0305-232436-qtee4o0r"
+		},
+		"ls_delta_stg1_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://adfinceptezstaging.dfs.core.windows.net/"
 		},
 		"ls_http_api_properties_typeProperties_url": {
 			"type": "string",
@@ -98,6 +106,10 @@
 		"schedule_trg_properties_pl_12_sql_adls_fixed_window_parameters_penddate": {
 			"type": "string",
 			"defaultValue": "2026-02-03"
+		},
+		"trg_insr_properties_pipeline_parameters_process_dt": {
+			"type": "string",
+			"defaultValue": "@formatDateTime(addDays(trigger().outputs.windowStartTime, 0), 'yyyy-MM-dd')"
 		},
 		"tumbling_one_specifc_day_properties_pipeline_parameters_pstartdate": {
 			"type": "string",
@@ -3902,73 +3914,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/pl_33_deltalake_sqlserver')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Copy data1",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureDatabricksDeltaLakeSource",
-								"query": "SELECT * FROM inceptez_insurance.ins_bronze.tblinsclaim LIMIT 10",
-								"exportSettings": {
-									"type": "AzureDatabricksDeltaLakeExportCommand"
-								}
-							},
-							"sink": {
-								"type": "AzureSqlSink",
-								"writeBehavior": "insert",
-								"sqlWriterUseTableLock": false
-							},
-							"enableStaging": true,
-							"stagingSettings": {
-								"linkedServiceName": {
-									"referenceName": "ls_blob_retail",
-									"type": "LinkedServiceReference"
-								},
-								"path": "retaildata/delta_to_sql"
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "ds_deltalake_insr",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "ds_sqlserver_sales",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ds_deltalake_insr')]",
-				"[concat(variables('factoryId'), '/datasets/ds_sqlserver_sales')]",
-				"[concat(variables('factoryId'), '/linkedServices/ls_blob_retail')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/Json1')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -5013,7 +4958,10 @@
 				},
 				"annotations": [],
 				"type": "AzureDatabricksDeltaLakeDataset",
-				"typeProperties": {},
+				"typeProperties": {
+					"database": "inceptez_insurance.ins_gold",
+					"table": "inceptez_insurance.ins_gold.claims_summary"
+				},
 				"schema": []
 			},
 			"dependsOn": [
@@ -5303,6 +5251,27 @@
 				"typeProperties": {
 					"schema": "dbo",
 					"table": "retail_cust_curated"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_sqlserver')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_sql_delta')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_sqlserver",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "tbl_claims_summary"
 				}
 			},
 			"dependsOn": [
@@ -5652,6 +5621,19 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/ls_adls_staging')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('ls_adls_staging_properties_typeProperties_url')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ls_blob_retail')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -5678,6 +5660,19 @@
 						"value": "[parameters('ls_databricks_accessToken')]"
 					},
 					"existingClusterId": "[parameters('ls_databricks_properties_typeProperties_existingClusterId')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_delta_stg1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('ls_delta_stg1_properties_typeProperties_url')]"
 				}
 			},
 			"dependsOn": []
@@ -5910,6 +5905,40 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/pl_01_blob_adls')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/trg_insr')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipeline": {
+					"pipelineReference": {
+						"referenceName": "pl_32_reprocess",
+						"type": "PipelineReference"
+					},
+					"parameters": {
+						"process_dt": "[parameters('trg_insr_properties_pipeline_parameters_process_dt')]"
+					}
+				},
+				"type": "TumblingWindowTrigger",
+				"typeProperties": {
+					"frequency": "Hour",
+					"interval": 24,
+					"startTime": "2026-03-08T00:00:00Z",
+					"endTime": "2026-03-15T01:26:00Z",
+					"delay": "00:00:00",
+					"maxConcurrency": 50,
+					"retryPolicy": {
+						"intervalInSeconds": 30
+					},
+					"dependsOn": []
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/pl_32_reprocess')]"
 			]
 		},
 		{
