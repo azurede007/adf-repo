@@ -107,10 +107,6 @@
 			"type": "string",
 			"defaultValue": "2026-02-03"
 		},
-		"trg_insr_properties_pipeline_parameters_process_dt": {
-			"type": "string",
-			"defaultValue": "@formatDateTime(addDays(trigger().outputs.windowStartTime, 0), 'yyyy-MM-dd')"
-		},
 		"tumbling_one_specifc_day_properties_pipeline_parameters_pstartdate": {
 			"type": "string",
 			"defaultValue": "@trigger().outputs.windowStartTime"
@@ -318,9 +314,6 @@
 					},
 					"schedule_trg_properties_pl_12_sql_adls_fixed_window_parameters_penddate": {
 						"value": "[parameters('schedule_trg_properties_pl_12_sql_adls_fixed_window_parameters_penddate')]"
-					},
-					"trg_insr_properties_pipeline_parameters_process_dt": {
-						"value": "[parameters('trg_insr_properties_pipeline_parameters_process_dt')]"
 					},
 					"tumbling_one_specifc_day_properties_pipeline_parameters_pstartdate": {
 						"value": "[parameters('tumbling_one_specifc_day_properties_pipeline_parameters_pstartdate')]"
