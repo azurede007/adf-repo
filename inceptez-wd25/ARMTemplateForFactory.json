@@ -107,6 +107,10 @@
 			"type": "string",
 			"defaultValue": "2026-02-03"
 		},
+		"trg_tumb_ins_data_process_properties_pipeline_parameters_process_dt": {
+			"type": "string",
+			"defaultValue": "@formatDateTime(trigger().outputs.windowStartTime, 'yyyy-MM-dd')"
+		},
 		"tumbling_one_specifc_day_properties_pipeline_parameters_pstartdate": {
 			"type": "string",
 			"defaultValue": "@trigger().outputs.windowStartTime"
@@ -114,10 +118,6 @@
 		"tumbling_one_specifc_day_properties_pipeline_parameters_penddate": {
 			"type": "string",
 			"defaultValue": "@trigger().outputs.windowEndTime"
-		},
-		"trg_tumb_ins_data_process_properties_pipeline_parameters_process_dt": {
-			"type": "string",
-			"defaultValue": "@formatDateTime(trigger().outputs.windowStartTime, 'yyyy-MM-dd')"
 		}
 	},
 	"variables": {
@@ -3914,6 +3914,249 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/pl_33_databricks_job')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "SELECT * FROM dbo.InsuranceClaims where CAST(claimdate AS DATE) = '@{pipeline().parameters.process_dt}'",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ds_sqlserver_sales",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ds_adls_insur_reprocess",
+								"type": "DatasetReference",
+								"parameters": {
+									"foldername": {
+										"value": "@concat('incrdata/claimdate=',pipeline().parameters.process_dt)",
+										"type": "Expression"
+									},
+									"filename": {
+										"value": "@concat(concat('claimdata_', formatDateTime(utcNow(),'hh_mm')),'.csv')",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					},
+					{
+						"name": "Job1",
+						"type": "DatabricksJob",
+						"dependsOn": [
+							{
+								"activity": "Copy data1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"jobId": "969330487122944",
+							"jobParameters": {
+								"reprocess_date": {
+									"value": "@pipeline().parameters.process_dt",
+									"type": "Expression"
+								}
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureDatabricks1",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"process_dt": {
+						"type": "string"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/ds_sqlserver_sales')]",
+				"[concat(variables('factoryId'), '/datasets/ds_adls_insur_reprocess')]",
+				"[concat(variables('factoryId'), '/linkedServices/AzureDatabricks1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_34_databricks_python')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "SELECT * FROM dbo.InsuranceClaims where CAST(claimdate AS DATE) = '@{pipeline().parameters.process_dt}'",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ds_sqlserver_sales",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ds_adls_insur_reprocess",
+								"type": "DatasetReference",
+								"parameters": {
+									"foldername": {
+										"value": "@concat('incrdata/claimdate=',pipeline().parameters.process_dt)",
+										"type": "Expression"
+									},
+									"filename": {
+										"value": "@concat(concat('claimdata_', formatDateTime(utcNow(),'hh_mm')),'.csv')",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					},
+					{
+						"name": "Python1",
+						"type": "DatabricksSparkPython",
+						"dependsOn": [
+							{
+								"activity": "Copy data1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pythonFile": "dbfs:/Workspace/Users/izalamsafa@gmail.com/adf_work/run_insurance_process.py",
+							"parameters": [
+								"@pipeline().parameters.process_dt"
+							]
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureDatabricks1",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"process_dt": {
+						"type": "string"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/ds_sqlserver_sales')]",
+				"[concat(variables('factoryId'), '/datasets/ds_adls_insur_reprocess')]",
+				"[concat(variables('factoryId'), '/linkedServices/AzureDatabricks1')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/Json1')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -5908,6 +6151,40 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/trg_tumb_ins_data_process')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipeline": {
+					"pipelineReference": {
+						"referenceName": "pl_32_reprocess",
+						"type": "PipelineReference"
+					},
+					"parameters": {
+						"process_dt": "[parameters('trg_tumb_ins_data_process_properties_pipeline_parameters_process_dt')]"
+					}
+				},
+				"type": "TumblingWindowTrigger",
+				"typeProperties": {
+					"frequency": "Hour",
+					"interval": 24,
+					"startTime": "2026-03-08T02:07:00Z",
+					"endTime": "2026-03-15T02:07:00Z",
+					"delay": "00:00:00",
+					"maxConcurrency": 1,
+					"retryPolicy": {
+						"intervalInSeconds": 30
+					},
+					"dependsOn": []
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/pl_32_reprocess')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/tumbling_fixed_window_trigger')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
@@ -6669,40 +6946,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/ds_sql_curated_join')]",
 				"[concat(variables('factoryId'), '/datasets/ds_sqlserver_sales')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/trg_tumb_ins_data_process')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipeline": {
-					"pipelineReference": {
-						"referenceName": "pl_32_reprocess",
-						"type": "PipelineReference"
-					},
-					"parameters": {
-						"process_dt": "[parameters('trg_tumb_ins_data_process_properties_pipeline_parameters_process_dt')]"
-					}
-				},
-				"type": "TumblingWindowTrigger",
-				"typeProperties": {
-					"frequency": "Hour",
-					"interval": 24,
-					"startTime": "2026-03-08T02:07:00Z",
-					"endTime": "2026-03-15T02:07:00Z",
-					"delay": "00:00:00",
-					"maxConcurrency": 1,
-					"retryPolicy": {
-						"intervalInSeconds": 30
-					},
-					"dependsOn": []
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/pl_32_reprocess')]"
 			]
 		}
 	]

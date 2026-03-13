@@ -19,6 +19,10 @@
 			"type": "string",
 			"defaultValue": "2026-02-03"
 		},
+		"trg_tumb_ins_data_process_properties_pipeline_parameters_process_dt": {
+			"type": "string",
+			"defaultValue": "@formatDateTime(trigger().outputs.windowStartTime, 'yyyy-MM-dd')"
+		},
 		"tumbling_one_specifc_day_properties_pipeline_parameters_pstartdate": {
 			"type": "string",
 			"defaultValue": "@trigger().outputs.windowStartTime"
@@ -26,16 +30,102 @@
 		"tumbling_one_specifc_day_properties_pipeline_parameters_penddate": {
 			"type": "string",
 			"defaultValue": "@trigger().outputs.windowEndTime"
-		},
-		"trg_tumb_ins_data_process_properties_pipeline_parameters_process_dt": {
-			"type": "string",
-			"defaultValue": "@formatDateTime(trigger().outputs.windowStartTime, 'yyyy-MM-dd')"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_17_retail_cust_curation')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_retail_cust_data_process",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-02-27T02:18:28Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_18_retail_txns_curation')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_retail_txns_process",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-02-27T02:31:13Z"
+			},
+			"dependsOn": []
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/pl_19_join_data_curation')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
@@ -637,6 +727,38 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/trg_tumb_ins_data_process')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipeline": {
+					"pipelineReference": {
+						"referenceName": "pl_32_reprocess",
+						"type": "PipelineReference"
+					},
+					"parameters": {
+						"process_dt": "[parameters('trg_tumb_ins_data_process_properties_pipeline_parameters_process_dt')]"
+					}
+				},
+				"type": "TumblingWindowTrigger",
+				"typeProperties": {
+					"frequency": "Hour",
+					"interval": 24,
+					"startTime": "2026-03-08T02:07:00Z",
+					"endTime": "2026-03-15T02:07:00Z",
+					"delay": "00:00:00",
+					"maxConcurrency": 1,
+					"retryPolicy": {
+						"intervalInSeconds": 30
+					},
+					"dependsOn": []
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/tumbling_one_specifc_day')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
@@ -691,38 +813,6 @@
 					"endTime": "2026-02-28T02:43:00Z",
 					"delay": "00:00:00",
 					"maxConcurrency": 50,
-					"retryPolicy": {
-						"intervalInSeconds": 30
-					},
-					"dependsOn": []
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/trg_tumb_ins_data_process')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipeline": {
-					"pipelineReference": {
-						"referenceName": "pl_32_reprocess",
-						"type": "PipelineReference"
-					},
-					"parameters": {
-						"process_dt": "[parameters('trg_tumb_ins_data_process_properties_pipeline_parameters_process_dt')]"
-					}
-				},
-				"type": "TumblingWindowTrigger",
-				"typeProperties": {
-					"frequency": "Hour",
-					"interval": 24,
-					"startTime": "2026-03-08T02:07:00Z",
-					"endTime": "2026-03-15T02:07:00Z",
-					"delay": "00:00:00",
-					"maxConcurrency": 1,
 					"retryPolicy": {
 						"intervalInSeconds": 30
 					},
@@ -864,6 +954,8 @@
 				"lastPublishTime": "2026-02-27T03:05:40Z"
 			},
 			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/pl_17_retail_cust_curation')]",
+				"[concat(variables('factoryId'), '/pipelines/pl_18_retail_txns_curation')]",
 				"[concat(variables('factoryId'), '/pipelines/pl_19_join_data_curation')]",
 				"[concat(variables('factoryId'), '/pipelines/pl_20_retail_sales_aggregation')]"
 			]

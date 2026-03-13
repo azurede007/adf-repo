@@ -80,14 +80,14 @@
 		"schedule_trg_properties_pl_12_sql_adls_fixed_window_parameters_penddate": {
 			"value": "2026-02-03"
 		},
+		"trg_tumb_ins_data_process_properties_pipeline_parameters_process_dt": {
+			"value": "@formatDateTime(trigger().outputs.windowStartTime, 'yyyy-MM-dd')"
+		},
 		"tumbling_one_specifc_day_properties_pipeline_parameters_pstartdate": {
 			"value": "@trigger().outputs.windowStartTime"
 		},
 		"tumbling_one_specifc_day_properties_pipeline_parameters_penddate": {
 			"value": "@trigger().outputs.windowEndTime"
-		},
-		"trg_tumb_ins_data_process_properties_pipeline_parameters_process_dt": {
-			"value": "@formatDateTime(trigger().outputs.windowStartTime, 'yyyy-MM-dd')"
 		},
 		"containerUri": {
 			"value": ""
