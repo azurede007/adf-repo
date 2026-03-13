@@ -88,7 +88,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"pythonFile": "dbfs:/Workspace/Users/izalamsafa@gmail.com/adf_work/run_insurance_process.py",
+					"pythonFile": "/Workspace/Users/izalamsafa@gmail.com/adf_work/run_insurance_process.py",
 					"parameters": [
 						"@pipeline().parameters.process_dt"
 					]
