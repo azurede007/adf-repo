@@ -3,15 +3,6 @@
 	"properties": {
 		"annotations": [],
 		"runtimeState": "Started",
-		"pipeline": {
-			"pipelineReference": {
-				"referenceName": "pl_32_reprocess",
-				"type": "PipelineReference"
-			},
-			"parameters": {
-				"process_dt": "@formatDateTime(addDays(trigger().outputs.windowStartTime, 0), 'yyyy-MM-dd')"
-			}
-		},
 		"type": "TumblingWindowTrigger",
 		"typeProperties": {
 			"frequency": "Hour",
