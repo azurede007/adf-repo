@@ -5,6 +5,9 @@
 		"factoryName": {
 			"value": "inceptez-wd25"
 		},
+		"AmazonS31_secretAccessKey": {
+			"value": ""
+		},
 		"AzureDatabricks1_accessToken": {
 			"value": ""
 		},
@@ -22,6 +25,12 @@
 		},
 		"ls_sqlserver_password": {
 			"value": ""
+		},
+		"GoogleBigQuery1_keyFileContent": {
+			"value": ""
+		},
+		"AmazonS31_properties_typeProperties_accessKeyId": {
+			"value": "AKIAY56NAQHHEK44ZZKE"
 		},
 		"AzureDatabricks1_properties_typeProperties_existingClusterId": {
 			"value": "0305-232436-qtee4o0r"

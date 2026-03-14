@@ -7,6 +7,10 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "inceptez-wd25"
 		},
+		"AmazonS31_secretAccessKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'secretAccessKey' of 'AmazonS31'"
+		},
 		"AzureDatabricks1_accessToken": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accessToken' of 'AzureDatabricks1'"
@@ -30,6 +34,14 @@
 		"ls_sqlserver_password": {
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'ls_sqlserver'"
+		},
+		"GoogleBigQuery1_keyFileContent": {
+			"type": "secureString",
+			"metadata": "Secure string for 'keyFileContent' of 'GoogleBigQuery1'"
+		},
+		"AmazonS31_properties_typeProperties_accessKeyId": {
+			"type": "string",
+			"defaultValue": "AKIAY56NAQHHEK44ZZKE"
 		},
 		"AzureDatabricks1_properties_typeProperties_existingClusterId": {
 			"type": "string",
@@ -146,6 +158,9 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
+					"AmazonS31_secretAccessKey": {
+						"value": "[parameters('AmazonS31_secretAccessKey')]"
+					},
 					"AzureDatabricks1_accessToken": {
 						"value": "[parameters('AzureDatabricks1_accessToken')]"
 					},
@@ -163,6 +178,12 @@
 					},
 					"ls_sqlserver_password": {
 						"value": "[parameters('ls_sqlserver_password')]"
+					},
+					"GoogleBigQuery1_keyFileContent": {
+						"value": "[parameters('GoogleBigQuery1_keyFileContent')]"
+					},
+					"AmazonS31_properties_typeProperties_accessKeyId": {
+						"value": "[parameters('AmazonS31_properties_typeProperties_accessKeyId')]"
 					},
 					"AzureDatabricks1_properties_typeProperties_existingClusterId": {
 						"value": "[parameters('AzureDatabricks1_properties_typeProperties_existingClusterId')]"
