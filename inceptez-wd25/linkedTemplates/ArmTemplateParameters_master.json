@@ -11,6 +11,9 @@
 		"AzureDatabricks1_accessToken": {
 			"value": ""
 		},
+		"GoogleBigQuery1_keyFileContent": {
+			"value": ""
+		},
 		"ls_adls_retail_accountKey": {
 			"value": ""
 		},
@@ -26,7 +29,10 @@
 		"ls_sqlserver_password": {
 			"value": ""
 		},
-		"GoogleBigQuery1_keyFileContent": {
+		"ls_amazon_s3_secretAccessKey": {
+			"value": ""
+		},
+		"ls_bigquery_hc_keyFileContent": {
 			"value": ""
 		},
 		"AmazonS31_properties_typeProperties_accessKeyId": {
@@ -97,6 +103,9 @@
 		},
 		"tumbling_one_specifc_day_properties_pipeline_parameters_penddate": {
 			"value": "@trigger().outputs.windowEndTime"
+		},
+		"ls_amazon_s3_properties_typeProperties_accessKeyId": {
+			"value": "AKIAY56NAQHHOFCL736U"
 		},
 		"containerUri": {
 			"value": ""

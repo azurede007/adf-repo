@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accessToken' of 'AzureDatabricks1'"
 		},
+		"GoogleBigQuery1_keyFileContent": {
+			"type": "secureString",
+			"metadata": "Secure string for 'keyFileContent' of 'GoogleBigQuery1'"
+		},
 		"ls_adls_retail_accountKey": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'ls_adls_retail'"
@@ -35,9 +39,13 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'ls_sqlserver'"
 		},
-		"GoogleBigQuery1_keyFileContent": {
+		"ls_amazon_s3_secretAccessKey": {
 			"type": "secureString",
-			"metadata": "Secure string for 'keyFileContent' of 'GoogleBigQuery1'"
+			"metadata": "Secure string for 'secretAccessKey' of 'ls_amazon_s3'"
+		},
+		"ls_bigquery_hc_keyFileContent": {
+			"type": "secureString",
+			"metadata": "Secure string for 'keyFileContent' of 'ls_bigquery_hc'"
 		},
 		"AmazonS31_properties_typeProperties_accessKeyId": {
 			"type": "string",
@@ -130,6 +138,10 @@
 		"tumbling_one_specifc_day_properties_pipeline_parameters_penddate": {
 			"type": "string",
 			"defaultValue": "@trigger().outputs.windowEndTime"
+		},
+		"ls_amazon_s3_properties_typeProperties_accessKeyId": {
+			"type": "string",
+			"defaultValue": "AKIAY56NAQHHOFCL736U"
 		}
 	},
 	"variables": {
@@ -4192,6 +4204,7 @@
 								"storeSettings": {
 									"type": "AmazonS3ReadSettings",
 									"recursive": true,
+									"wildcardFileName": "*",
 									"enablePartitionDiscovery": false
 								},
 								"formatSettings": {
@@ -4201,12 +4214,12 @@
 							"sink": {
 								"type": "DelimitedTextSink",
 								"storeSettings": {
-									"type": "AzureBlobStorageWriteSettings"
+									"type": "AzureBlobFSWriteSettings"
 								},
 								"formatSettings": {
 									"type": "DelimitedTextWriteSettings",
 									"quoteAllText": true,
-									"fileExtension": ".txt"
+									"fileExtension": ".csv"
 								}
 							},
 							"enableStaging": false,
@@ -4221,14 +4234,14 @@
 						},
 						"inputs": [
 							{
-								"referenceName": "DelimitedText1",
+								"referenceName": "ds_s3_hc",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
 						],
 						"outputs": [
 							{
-								"referenceName": "ds_blob_archive",
+								"referenceName": "ds_adls_hc",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -4241,8 +4254,77 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/DelimitedText1')]",
-				"[concat(variables('factoryId'), '/datasets/ds_blob_archive')]"
+				"[concat(variables('factoryId'), '/datasets/ds_s3_hc')]",
+				"[concat(variables('factoryId'), '/datasets/ds_adls_hc')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_36_gcp_bigquery')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "GoogleBigQueryV2Source"
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".csv"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ds_claims_bq",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ds_adls_claims",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/ds_claims_bq')]",
+				"[concat(variables('factoryId'), '/datasets/ds_adls_claims')]"
 			]
 		},
 		{
@@ -5280,6 +5362,27 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/ds_bq')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "GoogleBigQuery1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "GoogleBigQueryV2Object",
+				"schema": [],
+				"typeProperties": {
+					"dataset": "inceptez_insurance",
+					"table": "claim_transactions"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/GoogleBigQuery1')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ds_cust_src')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -5979,6 +6082,25 @@
 						"value": "[parameters('AzureDatabricks1_accessToken')]"
 					},
 					"existingClusterId": "[parameters('AzureDatabricks1_properties_typeProperties_existingClusterId')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/GoogleBigQuery1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "GoogleBigQueryV2",
+				"version": "1.1",
+				"typeProperties": {
+					"projectId": "inceptez-gcp-batchwd25",
+					"authenticationType": "ServiceAuthentication",
+					"keyFileContent": {
+						"type": "SecureString",
+						"value": "[parameters('GoogleBigQuery1_keyFileContent')]"
+					}
 				}
 			},
 			"dependsOn": []
@@ -7086,76 +7208,82 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/pl_36_gcp_bigquery')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
+			"name": "[concat(parameters('factoryName'), '/ls_amazon_s3')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"activities": [
-					{
-						"name": "Copy data1",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "GoogleBigQueryV2Source"
-							},
-							"sink": {
-								"type": "DelimitedTextSink",
-								"storeSettings": {
-									"type": "AzureBlobStorageWriteSettings"
-								},
-								"formatSettings": {
-									"type": "DelimitedTextWriteSettings",
-									"quoteAllText": true,
-									"fileExtension": ".txt"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "ds_bq",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "ds_blob_archive",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
+				"annotations": [],
+				"type": "AmazonS3",
+				"typeProperties": {
+					"serviceUrl": "https://s3.amazonaws.com",
+					"accessKeyId": "[parameters('ls_amazon_s3_properties_typeProperties_accessKeyId')]",
+					"secretAccessKey": {
+						"type": "SecureString",
+						"value": "[parameters('ls_amazon_s3_secretAccessKey')]"
+					},
+					"authenticationType": "AccessKey"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_s3_hc')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_amazon_s3",
+					"type": "LinkedServiceReference"
 				},
-				"annotations": []
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AmazonS3Location",
+						"bucketName": "inceptezhealthscience-614073401806-ap-southeast-2-an",
+						"folderPath": "patientdata"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ds_bq')]",
-				"[concat(variables('factoryId'), '/datasets/ds_blob_archive')]"
+				"[concat(variables('factoryId'), '/linkedServices/ls_amazon_s3')]"
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/GoogleBigQuery1')]",
+			"name": "[concat(parameters('factoryName'), '/ds_adls_hc')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_adls_retail",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "healthcare/landing/patients",
+						"fileSystem": "insurancedata"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_adls_retail')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_bigquery_hc')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -7167,19 +7295,19 @@
 					"authenticationType": "ServiceAuthentication",
 					"keyFileContent": {
 						"type": "SecureString",
-						"value": "[parameters('GoogleBigQuery1_keyFileContent')]"
+						"value": "[parameters('ls_bigquery_hc_keyFileContent')]"
 					}
 				}
 			},
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/ds_bq')]",
+			"name": "[concat(parameters('factoryName'), '/ds_claims_bq')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "GoogleBigQuery1",
+					"referenceName": "ls_bigquery_hc",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
@@ -7191,7 +7319,35 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/GoogleBigQuery1')]"
+				"[concat(variables('factoryId'), '/linkedServices/ls_bigquery_hc')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_adls_claims')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_adls_retail",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "healthcare/landing/claims",
+						"fileSystem": "insurancedata"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_adls_retail')]"
 			]
 		}
 	]

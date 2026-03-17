@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accessToken' of 'AzureDatabricks1'"
 		},
+		"GoogleBigQuery1_keyFileContent": {
+			"type": "secureString",
+			"metadata": "Secure string for 'keyFileContent' of 'GoogleBigQuery1'"
+		},
 		"ls_adls_retail_accountKey": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'ls_adls_retail'"
@@ -35,9 +39,13 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'ls_sqlserver'"
 		},
-		"GoogleBigQuery1_keyFileContent": {
+		"ls_amazon_s3_secretAccessKey": {
 			"type": "secureString",
-			"metadata": "Secure string for 'keyFileContent' of 'GoogleBigQuery1'"
+			"metadata": "Secure string for 'secretAccessKey' of 'ls_amazon_s3'"
+		},
+		"ls_bigquery_hc_keyFileContent": {
+			"type": "secureString",
+			"metadata": "Secure string for 'keyFileContent' of 'ls_bigquery_hc'"
 		},
 		"AmazonS31_properties_typeProperties_accessKeyId": {
 			"type": "string",
@@ -94,6 +102,10 @@
 		"ls_sqlserver_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "inceptezuser"
+		},
+		"ls_amazon_s3_properties_typeProperties_accessKeyId": {
+			"type": "string",
+			"defaultValue": "AKIAY56NAQHHOFCL736U"
 		}
 	},
 	"variables": {
@@ -133,6 +145,25 @@
 						"value": "[parameters('AzureDatabricks1_accessToken')]"
 					},
 					"existingClusterId": "[parameters('AzureDatabricks1_properties_typeProperties_existingClusterId')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/GoogleBigQuery1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "GoogleBigQueryV2",
+				"version": "1.1",
+				"typeProperties": {
+					"projectId": "inceptez-gcp-batchwd25",
+					"authenticationType": "ServiceAuthentication",
+					"keyFileContent": {
+						"type": "SecureString",
+						"value": "[parameters('GoogleBigQuery1_keyFileContent')]"
+					}
 				}
 			},
 			"dependsOn": []
@@ -332,7 +363,26 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/GoogleBigQuery1')]",
+			"name": "[concat(parameters('factoryName'), '/ls_amazon_s3')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AmazonS3",
+				"typeProperties": {
+					"serviceUrl": "https://s3.amazonaws.com",
+					"accessKeyId": "[parameters('ls_amazon_s3_properties_typeProperties_accessKeyId')]",
+					"secretAccessKey": {
+						"type": "SecureString",
+						"value": "[parameters('ls_amazon_s3_secretAccessKey')]"
+					},
+					"authenticationType": "AccessKey"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_bigquery_hc')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -344,7 +394,7 @@
 					"authenticationType": "ServiceAuthentication",
 					"keyFileContent": {
 						"type": "SecureString",
-						"value": "[parameters('GoogleBigQuery1_keyFileContent')]"
+						"value": "[parameters('ls_bigquery_hc_keyFileContent')]"
 					}
 				}
 			},
@@ -460,61 +510,6 @@
 					"columnDelimiter": ",",
 					"escapeChar": "\\",
 					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ls_adls_retail')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ds_adls_emp_att')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ls_adls_retail",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "employee_attendance.csv",
-						"fileSystem": "employee"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ls_adls_retail')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ds_adls_event_trg_src')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ls_adls_retail",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileSystem": "moviedata"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": false,
 					"quoteChar": "\""
 				},
 				"schema": []

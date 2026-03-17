@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accessToken' of 'AzureDatabricks1'"
 		},
+		"GoogleBigQuery1_keyFileContent": {
+			"type": "secureString",
+			"metadata": "Secure string for 'keyFileContent' of 'GoogleBigQuery1'"
+		},
 		"ls_adls_retail_accountKey": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'ls_adls_retail'"
@@ -35,9 +39,13 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'ls_sqlserver'"
 		},
-		"GoogleBigQuery1_keyFileContent": {
+		"ls_amazon_s3_secretAccessKey": {
 			"type": "secureString",
-			"metadata": "Secure string for 'keyFileContent' of 'GoogleBigQuery1'"
+			"metadata": "Secure string for 'secretAccessKey' of 'ls_amazon_s3'"
+		},
+		"ls_bigquery_hc_keyFileContent": {
+			"type": "secureString",
+			"metadata": "Secure string for 'keyFileContent' of 'ls_bigquery_hc'"
 		},
 		"AmazonS31_properties_typeProperties_accessKeyId": {
 			"type": "string",
@@ -131,6 +139,10 @@
 			"type": "string",
 			"defaultValue": "@trigger().outputs.windowEndTime"
 		},
+		"ls_amazon_s3_properties_typeProperties_accessKeyId": {
+			"type": "string",
+			"defaultValue": "AKIAY56NAQHHOFCL736U"
+		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -164,6 +176,9 @@
 					"AzureDatabricks1_accessToken": {
 						"value": "[parameters('AzureDatabricks1_accessToken')]"
 					},
+					"GoogleBigQuery1_keyFileContent": {
+						"value": "[parameters('GoogleBigQuery1_keyFileContent')]"
+					},
 					"ls_adls_retail_accountKey": {
 						"value": "[parameters('ls_adls_retail_accountKey')]"
 					},
@@ -179,8 +194,11 @@
 					"ls_sqlserver_password": {
 						"value": "[parameters('ls_sqlserver_password')]"
 					},
-					"GoogleBigQuery1_keyFileContent": {
-						"value": "[parameters('GoogleBigQuery1_keyFileContent')]"
+					"ls_amazon_s3_secretAccessKey": {
+						"value": "[parameters('ls_amazon_s3_secretAccessKey')]"
+					},
+					"ls_bigquery_hc_keyFileContent": {
+						"value": "[parameters('ls_bigquery_hc_keyFileContent')]"
 					},
 					"AmazonS31_properties_typeProperties_accessKeyId": {
 						"value": "[parameters('AmazonS31_properties_typeProperties_accessKeyId')]"
@@ -223,6 +241,9 @@
 					},
 					"ls_sqlserver_properties_typeProperties_userName": {
 						"value": "[parameters('ls_sqlserver_properties_typeProperties_userName')]"
+					},
+					"ls_amazon_s3_properties_typeProperties_accessKeyId": {
+						"value": "[parameters('ls_amazon_s3_properties_typeProperties_accessKeyId')]"
 					}
 				}
 			},
@@ -339,6 +360,26 @@
 					},
 					"schedule_trg_properties_pl_12_sql_adls_fixed_window_parameters_penddate": {
 						"value": "[parameters('schedule_trg_properties_pl_12_sql_adls_fixed_window_parameters_penddate')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'inceptez-wd25_ArmTemplate_4')]"
+			]
+		},
+		{
+			"name": "inceptez-wd25_ArmTemplate_6",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_6.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
 					},
 					"trg_tumb_ins_data_process_properties_pipeline_parameters_process_dt": {
 						"value": "[parameters('trg_tumb_ins_data_process_properties_pipeline_parameters_process_dt')]"
@@ -352,7 +393,7 @@
 				}
 			},
 			"dependsOn": [
-				"[resourceId('Microsoft.Resources/deployments', 'inceptez-wd25_ArmTemplate_4')]"
+				"[resourceId('Microsoft.Resources/deployments', 'inceptez-wd25_ArmTemplate_5')]"
 			]
 		}
 	]
