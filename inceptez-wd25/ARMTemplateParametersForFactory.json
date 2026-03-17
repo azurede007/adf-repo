@@ -35,6 +35,9 @@
 		"ls_bigquery_hc_keyFileContent": {
 			"value": ""
 		},
+		"ls_sql_hc_password": {
+			"value": ""
+		},
 		"AmazonS31_properties_typeProperties_accessKeyId": {
 			"value": "AKIAY56NAQHHEK44ZZKE"
 		},
@@ -106,6 +109,15 @@
 		},
 		"ls_amazon_s3_properties_typeProperties_accessKeyId": {
 			"value": "AKIAY56NAQHHOFCL736U"
+		},
+		"ls_sql_hc_properties_typeProperties_server": {
+			"value": "inceptezwd25.database.windows.net"
+		},
+		"ls_sql_hc_properties_typeProperties_database": {
+			"value": "dbwdbatch25"
+		},
+		"ls_sql_hc_properties_typeProperties_userName": {
+			"value": "inceptezuser"
 		}
 	}
 }

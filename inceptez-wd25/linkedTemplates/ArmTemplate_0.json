@@ -47,6 +47,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'keyFileContent' of 'ls_bigquery_hc'"
 		},
+		"ls_sql_hc_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'ls_sql_hc'"
+		},
 		"AmazonS31_properties_typeProperties_accessKeyId": {
 			"type": "string",
 			"defaultValue": "AKIAY56NAQHHEK44ZZKE"
@@ -106,6 +110,18 @@
 		"ls_amazon_s3_properties_typeProperties_accessKeyId": {
 			"type": "string",
 			"defaultValue": "AKIAY56NAQHHOFCL736U"
+		},
+		"ls_sql_hc_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "inceptezwd25.database.windows.net"
+		},
+		"ls_sql_hc_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "dbwdbatch25"
+		},
+		"ls_sql_hc_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "inceptezuser"
 		}
 	},
 	"variables": {
@@ -401,6 +417,28 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/ls_sql_hc')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('ls_sql_hc_properties_typeProperties_server')]",
+					"database": "[parameters('ls_sql_hc_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": false,
+					"authenticationType": "SQL",
+					"userName": "[parameters('ls_sql_hc_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('ls_sql_hc_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/DelimitedText1')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -476,35 +514,6 @@
 							"type": "Expression"
 						},
 						"folderPath": "salesdata/sales_archive",
-						"fileSystem": "retaildatastore"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ls_adls_retail')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ds_adls_customer_src')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ls_adls_retail",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "custs",
-						"folderPath": "customer",
 						"fileSystem": "retaildatastore"
 					},
 					"columnDelimiter": ",",
