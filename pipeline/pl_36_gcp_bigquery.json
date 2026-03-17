@@ -21,12 +21,12 @@
 					"sink": {
 						"type": "DelimitedTextSink",
 						"storeSettings": {
-							"type": "AzureBlobStorageWriteSettings"
+							"type": "AzureBlobFSWriteSettings"
 						},
 						"formatSettings": {
 							"type": "DelimitedTextWriteSettings",
 							"quoteAllText": true,
-							"fileExtension": ".txt"
+							"fileExtension": ".csv"
 						}
 					},
 					"enableStaging": false,
@@ -41,13 +41,13 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "ds_bq",
+						"referenceName": "ds_claims_bq",
 						"type": "DatasetReference"
 					}
 				],
 				"outputs": [
 					{
-						"referenceName": "ds_blob_archive",
+						"referenceName": "ds_adls_claims",
 						"type": "DatasetReference"
 					}
 				]
